@@ -15,6 +15,7 @@ type Query {
     #The value is true if the template has image firmware.
     templatesHasImageFirmware(templatesId: [Int]!): [MapStringToString]
     getDevices(pagesize: Int, pagenumber: Int, labelfilter: String): [DeviceListPage]
+    getDeviceById(deviceId: String): Device
   }
 `];
 
