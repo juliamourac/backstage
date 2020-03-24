@@ -78,16 +78,19 @@ const Resolvers = {
 
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-        console.log(fetchedData);
+        // console.log(fetchedData);
         const deviceList = ([{
           totalCount: fetchedData.devices.length,
           hasNextPage: fetchedData.pagination.has_next,
           hasPreviousPage: fetchedData.pagination.page != 1,
           devices: fetchedData.devices,
         }]);
+
+        console.log(deviceList);
+
         return deviceList;
       } catch (error) {
-        LOG.console.warn(error);
+        console.log(error);
       }
     },
   },
@@ -113,7 +116,7 @@ const Resolvers = {
       templateData = templateData.templates;
       const fetchedKeys = Object.keys(fetchedTemplates);
       const toReturn = templateData.filter(template => fetchedTemplates.includes(template.id));
-      console.log(`Template: ${toReturn}`);
+      // console.log(`Template: ${toReturn}`);
       return toReturn;
     },
   },
