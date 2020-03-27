@@ -16,6 +16,7 @@ type Query {
     templatesHasImageFirmware(templatesId: [Int]!): [MapStringToString]
     getDevices(pagesize: Int, pagenumber: Int, label: String): [DeviceListPage]
     getDeviceById(deviceId: String): Device
+    getDeviceHistory(deviceId: String!, attr: String, dateFrom: String, dateTo: String, lastN: Int): History
   }
 `];
 

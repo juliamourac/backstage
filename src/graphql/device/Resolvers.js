@@ -93,6 +93,52 @@ const Resolvers = {
         console.log(error);
       }
     },
+
+    async getDeviceHistory(root, params){
+      /*TODO: query from API the device and template to finde out which is the type of the attr;
+       *format the object that returns;
+       *move the valueType switch from getDeviceById to attrs
+       *switch input to HistoryInput (in Schema.js)*/
+      const deviceid = params.deviceId;
+      const keys = Object.keys(params);
+      keys.shift();
+      const lastKey = keys[keys.length - 1];
+      let requestString = `/history/device/${deviceid}/history?`;
+      keys.forEach((element) => {
+        if (element === lastKey) {
+          requestString += `${element}=${params[element]}`;
+        } else {
+          requestString += `${element}=${params[element]}&`;
+        }
+      });
+
+      console.log(`\nrequest: ${requestString}`);
+
+      try{
+        console.log("Inicio do try");
+        const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
+        console.log(`Data: ${JSON.stringify(fetchedData)}`);
+        let readings = [];
+        fetchedData.valor.forEach(element => {
+          readings.push({
+            label: element.attr,
+            valueType: 'UNDEFINED',
+            value: element.value,
+            timestamp:element.ts
+          })
+        });
+
+        console.log(readings);
+        return ({
+          deviceID: deviceid,
+          label: "devicelabel",
+          attrs: readings
+        });
+      }
+      catch (error){
+        LOG.warn(error);
+      }
+    },
   },
 
   Device: {
