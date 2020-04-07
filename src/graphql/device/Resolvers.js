@@ -94,50 +94,70 @@ const Resolvers = {
       }
     },
 
-    async getDeviceHistory(root, params){
-      /*TODO: query from API the device and template to finde out which is the type of the attr;
-       *format the object that returns;
-       *move the valueType switch from getDeviceById to attrs
-       *switch input to HistoryInput (in Schema.js)*/
-      const deviceid = params.deviceId;
-      const keys = Object.keys(params);
+    getDeviceHistory(root, params){
+      const history = [];
+      const keys = Object.keys(params.input);
       keys.shift();
-      const lastKey = keys[keys.length - 1];
-      let requestString = `/history/device/${deviceid}/history?`;
-      keys.forEach((element) => {
-        if (element === lastKey) {
-          requestString += `${element}=${params[element]}`;
-        } else {
-          requestString += `${element}=${params[element]}&`;
+      console.log(`Keys: ${keys}`); 
+      const requestStringPt1 = '/history/device/';
+      let requestStringPt2 = '/history'
+      
+      if (keys.length != 0) {
+        requestStringPt2 += '?';
+        const lastKey = keys[keys.length - 1];
+        keys.forEach((element) => {
+          if (element === lastKey) {
+            requestStringPt2 += `${element}=${params[element]}`;
+          } else {
+            requestStringPt2 += `${element}=${params[element]}&`;
+          }
+        });
+      }
+      //builds request string, format history and pushes to the result to the returning array
+      params.input.devices.forEach(async (obj) => {
+        let requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}`;
+        try {
+          const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
+          const { data: deviceInfo } = await axios(optionsAxios(UTIL.GET, `/device/${obj.deviceID}`));
+          let readings = [];
+          
+          //Atributo da leitura
+          Object.keys(fetchedData).forEach(attribute => {
+            //element is the object that contains a reading
+            fetchedData[attribute].forEach((element) => {
+
+              let valtype ='';
+              Object.keys(deviceInfo.attrs).forEach((templateId) => {
+                deviceInfo.attrs[templateId].forEach((attrData) => {
+                  if (attrData.label === element.attr) {
+                    valtype = attrData.value_type;
+                  }
+                });
+              });
+
+              readings.push({
+                label: element.attr,
+                valueType: valtype,
+                value: element.value,
+                timestamp: element.ts
+              });
+            });
+            
+          });
+
+          history.push({
+            deviceID: obj.deviceID,
+            label: deviceInfo.label,
+            attrs: readings
+          });
+
+          console.log(`History: ${JSON.stringify(history)}`);
+          return history;
+
+        } catch (error) {
+          LOG.warn(error);
         }
       });
-
-      console.log(`\nrequest: ${requestString}`);
-
-      try{
-        console.log("Inicio do try");
-        const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-        console.log(`Data: ${JSON.stringify(fetchedData)}`);
-        let readings = [];
-        fetchedData.valor.forEach(element => {
-          readings.push({
-            label: element.attr,
-            valueType: 'UNDEFINED',
-            value: element.value,
-            timestamp:element.ts
-          })
-        });
-
-        console.log(readings);
-        return ({
-          deviceID: deviceid,
-          label: "devicelabel",
-          attrs: readings
-        });
-      }
-      catch (error){
-        LOG.warn(error);
-      }
     },
   },
 
@@ -167,5 +187,29 @@ const Resolvers = {
     },
   },
 };
+
+function formatValueType(valType){
+  let valueType = '';
+  switch (valType) {
+    case 'integer':
+      valueType = 'NUMBER';
+      break;
+    case 'float':
+      valueType = 'NUMBER';
+      break;
+    case 'bool':
+      valueType = 'BOOLEAN';
+      break;
+    case 'string':
+      valueType = 'STRING';
+      break;
+    case 'geo:point':
+      valueType = 'GEO';
+      break;
+    default:
+      valueType = 'UNDEFINED';
+  }
+  return valueType;
+}
 
 module.exports = Resolvers;
