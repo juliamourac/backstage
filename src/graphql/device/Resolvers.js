@@ -20,33 +20,12 @@ const Resolvers = {
 
       try {
         const { data: deviceData } = await axios(optionsAxios(UTIL.GET, `/device/${deviceId}`));
-        // console.log('data', deviceData);
         device.id = deviceData.id;
         device.label = deviceData.label;
         device.attrs = [];
         Object.keys(deviceData.attrs).forEach((key) => {
           for (let i = 0; i < deviceData.attrs[key].length; i += 1) {
-            let valueType = '';
-
-            switch (deviceData.attrs[key][i].value_type) {
-              case 'integer':
-                valueType = 'NUMBER';
-                break;
-              case 'float':
-                valueType = 'NUMBER';
-                break;
-              case 'bool':
-                valueType = 'BOOLEAN';
-                break;
-              case 'string':
-                valueType = 'STRING';
-                break;
-              case 'geo:point':
-                valueType = 'GEO';
-                break;
-              default:
-                valueType = 'UNDEFINED';
-            }
+            let valueType = formatValueType(deviceData.attrs[key][i].value_type);
 
             device.attrs.push({
               label: deviceData.attrs[key][i].label,
@@ -57,14 +36,12 @@ const Resolvers = {
 
         return (device);
       } catch (err) {
-        console.log('erro', err);
-        return (err);
+        LOG.warn(err);
       }
     },
 
     async getDevices(root, params) {
       // building the request string
-      // TODO: is there a better way to do this?
       let requestString = '/device?';
       const keys = Object.keys(params);
       const last = keys[keys.length - 1];
@@ -78,7 +55,6 @@ const Resolvers = {
 
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-        // console.log(fetchedData);
         const deviceList = ([{
           totalCount: fetchedData.devices.length,
           hasNextPage: fetchedData.pagination.has_next,
@@ -90,7 +66,7 @@ const Resolvers = {
 
         return deviceList;
       } catch (error) {
-        console.log(error);
+        LOG.warn(error);
       }
     },
 
@@ -121,7 +97,7 @@ const Resolvers = {
           const { data: deviceInfo } = await axios(optionsAxios(UTIL.GET, `/device/${obj.deviceID}`));
           let readings = [];
           
-          //Atributo da leitura
+          //Reading "attribute"
           Object.keys(fetchedData).forEach(attribute => {
             //element is the object that contains a reading
             fetchedData[attribute].forEach((element) => {
@@ -130,7 +106,7 @@ const Resolvers = {
               Object.keys(deviceInfo.attrs).forEach((templateId) => {
                 deviceInfo.attrs[templateId].forEach((attrData) => {
                   if (attrData.label === element.attr) {
-                    valtype = attrData.value_type;
+                    valtype = formatValueType(attrData.value_type);
                   }
                 });
               });
@@ -182,7 +158,6 @@ const Resolvers = {
       templateData = templateData.templates;
       const fetchedKeys = Object.keys(fetchedTemplates);
       const toReturn = templateData.filter(template => fetchedTemplates.includes(template.id));
-      // console.log(`Template: ${toReturn}`);
       return toReturn;
     },
   },
