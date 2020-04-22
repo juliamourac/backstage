@@ -72,7 +72,7 @@ const deviceList = JSON.parse[
           {
             "label": "attr1",
             "type": "dynamic",
-            "value_type": "integer",
+            "value_type": "NUMBER",
             "value": null,
             "meta": null
           }
@@ -91,7 +91,7 @@ const deviceList = JSON.parse[
           {
             "label": "attr1",
             "type": "dynamic",
-            "value_type": "integer",
+            "value_type": "NUMBER",
             "value": null,
             "meta": null
           }
@@ -110,7 +110,7 @@ const deviceList = JSON.parse[
           {
             "label": "attr1",
             "type": "dynamic",
-            "value_type": "integer",
+            "value_type": "NUMBER",
             "value": null,
             "meta": null
           }

@@ -16,7 +16,7 @@ const query = [`
       #Checks if templates has Image Firmware and return a array with objects key-value, where key is a id template and value is a boolean.
       #The value is true if the template has image firmware.
       templatesHasImageFirmware(templatesId: [Int]!): [MapStringToString]
-      getDevices(pagesize: Int, pagenumber: Int, label: String): [DeviceListPage]
+      getDevices(page: PageInput, filter: FilterDeviceInput): [DeviceListPage]
       getDeviceById(deviceId: String): Device
       getDeviceHistory(input: HistoryInput): [History]
       getConfig(tenant: String!, user:String!): Config
