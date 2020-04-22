@@ -1,10 +1,10 @@
 const TypeDefs= [`
     type Config {
-        config: Object!
+        config: String!
     }
 
     input ConfigInput{
-        config: Object!
+        config: String!
     }
 `];
 

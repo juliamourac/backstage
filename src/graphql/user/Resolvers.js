@@ -6,24 +6,26 @@ const connection = require('../../db');
 const Resolvers = {
     Query: {
         async getConfig(root, params){
+            console.log("Into getConfig");
             const query = {
-                text: "SELECT config FROM user_config WHERE user=$1 AND tenant=$2;",
+                text: "SELECT config FROM user_config WHERE username=$1 AND tenant=$2;",
                 values: [params.user, params.tenant]
             };
 
-            const client = await pool.connect();
-            const result = client.query(()=>{
-                return 'ye';
-            });
+            const client = await connection.connect();
+            const result = client.query(query);
+            console.log(`Resultado: ${result}`);
         }
+        
     },
 
     Mutation: {
         async updateConfig(root, params) {
+            console.log("Into update configs");
             try {
-                const client = await pool.connect();
+                const client = await connection.connect();
                 let query = {
-                    text: "SELECT config FROM user_config WHERE user=$1 AND tenant=$2;",
+                    text: "SELECT config FROM user_config WHERE username=$1 AND tenant=$2;",
                     values: [params.user, params.tenant]
                 };
                 let result = await client.query(query, (err) => {
@@ -33,7 +35,7 @@ const Resolvers = {
                 });
                 if (result) {
                     query = {
-                        text: "UPDATE user_config(config) SET config=$3 WHERE user=$1 AND tenant=$2;",
+                        text: "UPDATE user_config(config) SET config=$3 WHERE username=$1 AND tenant=$2;",
                         values: [params.user, params.tenant, params.config]
                     };
                     client.query(query, (err, res) => {
