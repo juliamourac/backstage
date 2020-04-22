@@ -36,20 +36,27 @@ const Resolvers = {
 
         return (device);
       } catch (err) {
-        LOG.warn(err);
+        LOG.error(err);
       }
     },
 
     async getDevices(root, params) {
       // building the request string
+      let requestParameters = {
+        page_size: params.page['size'] || 20,
+        page_num: params.page['number'] || 1,
+      }
+      if (params.hasOwnProperty('filter') && params.filter.hasOwnProperty('label') ){
+        requestParameters.label = params.filter.label;
+      }
       let requestString = '/device?';
-      const keys = Object.keys(params);
+      const keys = Object.keys(requestParameters);
       const last = keys[keys.length - 1];
       keys.forEach((element) => {
         if (element === last) {
-          requestString += `${element}=${params[element]}`;
+          requestString += `${element}=${requestParameters[element]}`;
         } else {
-          requestString += `${element}=${params[element]}&`;
+          requestString += `${element}=${requestParameters[element]}&`;
         }
       });
 
@@ -62,11 +69,10 @@ const Resolvers = {
           devices: fetchedData.devices,
         }]);
 
-        console.log(deviceList);
-
         return deviceList;
+
       } catch (error) {
-        LOG.warn(error);
+        LOG.error(error);
       }
     },
 
@@ -74,9 +80,8 @@ const Resolvers = {
       const history = [];
       const keys = Object.keys(params.input);
       keys.shift();
-      console.log(`Keys: ${keys}`); 
       const requestStringPt1 = '/history/device/';
-      let requestStringPt2 = '/history'
+      let requestStringPt2 = '/history';
       
       if (keys.length != 0) {
         requestStringPt2 += '?';
@@ -127,11 +132,10 @@ const Resolvers = {
             attrs: readings
           });
 
-          console.log(`History: ${JSON.stringify(history)}`);
           return history;
 
         } catch (error) {
-          LOG.warn(error);
+          LOG.error(error);
         }
       });
     },
@@ -145,6 +149,7 @@ const Resolvers = {
       const toReturn = [];
       fetchedKeys.forEach((element) => {
         if (fetchedAttrs[element][0].type === 'dynamic') {
+          fetchedAttrs[element][0].value_type = formatValueType(fetchedAttrs[element][0].value_type);
           toReturn.push(fetchedAttrs[element][0]);
         }
       });
@@ -153,10 +158,15 @@ const Resolvers = {
 
     async templates(root) {
       const fetchedTemplates = root.templates;
-      let { data: templateData } = await axios(optionsAxios(UTIL.GET, '/template'));
-      templateData = templateData.templates;
-      const toReturn = templateData.filter(template => fetchedTemplates.includes(template.id));
-      return toReturn;
+      try {
+        let { data: templateData } = await axios(optionsAxios(UTIL.GET, '/template'));
+        templateData = templateData.templates;
+        const toReturn = templateData.filter(template => fetchedTemplates.includes(template.id));
+        return toReturn;
+      }
+      catch (error){
+        LOG.error(error);
+      }
     },
   },
 };

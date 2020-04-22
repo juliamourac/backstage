@@ -5,14 +5,11 @@ const TypeDefs = [`
         actuate
     }
     enum ValueType {
-        integer
-        float
-        text
-        number
-        string
-        boolean
-        geo
-        undefined
+        NUMBER
+        STRING
+        BOOLEAN
+        GEO
+        UNDEFINED
     }
     type Meta{
         label: String!
@@ -45,7 +42,7 @@ const TypeDefs = [`
         hasPreviousPage: Boolean!
         devices: [Device!]
     }
-    type PageInput {
+    input PageInput {
         number: Int
         size: Int
     }

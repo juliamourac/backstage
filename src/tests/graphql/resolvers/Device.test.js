@@ -24,7 +24,7 @@ it('get device', () => {
 it('should get a list of devices', () => {
   axios.mockImplementationOnce(() => Promise.resolve({data: deviceList}));
   const root = {};
-  const params = {label: "d"};
+  const params = {filter: {label: "d"}};
 
   return Resolvers.Query.getDevices(root, params).then((output) => {
     expect(output).toEqual(deviceList)
