@@ -5,8 +5,6 @@ const templateTypeDefs = require('./template/TypeDefs');
 const templateResolvers = require('./template/Resolvers');
 const deviceTypeDefs = require('./device/TypeDefs');
 const deviceResolvers = require('./device/Resolvers');
-const userTypeDefs = require('./user/TypeDefs');
-const userResolvers = require('./user/Resolvers');
 
 
 const query = [`
@@ -17,7 +15,7 @@ const query = [`
       #The value is true if the template has image firmware.
       templatesHasImageFirmware(templatesId: [Int]!): [MapStringToString]
       getDevices(page: PageInput, filter: FilterDeviceInput): [DeviceListPage]
-      getDeviceById(deviceId: String): Device
+      getDeviceById(deviceId: String!): Device
       getDeviceHistory(input: HistoryInput): [History]
       getConfig(tenant: String!, user:String!): Config
     }
@@ -28,8 +26,8 @@ const query = [`
 
 // Put schema together into one array of schema strings
 // and one map of resolvers, like makeExecutableSchema expects
-const typeDefs = [...query, ...templateTypeDefs, ...commonTypeDefs, ...deviceTypeDefs, ...userTypeDefs];
-const resolvers = merge(templateResolvers, deviceResolvers, userResolvers);
+const typeDefs = [...query, ...templateTypeDefs, ...commonTypeDefs, ...deviceTypeDefs];
+const resolvers = merge(templateResolvers, deviceResolvers);
 
 const executableSchema = makeExecutableSchema({ typeDefs, resolvers });
 

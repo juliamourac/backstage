@@ -46,7 +46,7 @@ const Resolvers = {
         page_size: params.page['size'] || 20,
         page_num: params.page['number'] || 1,
       }
-      if (params.hasOwnProperty('filter') && params.filter.hasOwnProperty('label') ){
+      if (params.hasOwnProperty('filter') && params.filter.label != null ){
         requestParameters.label = params.filter.label;
       }
       let requestString = '/device?';
@@ -154,19 +154,6 @@ const Resolvers = {
         }
       });
       return toReturn;
-    },
-
-    async templates(root) {
-      const fetchedTemplates = root.templates;
-      try {
-        let { data: templateData } = await axios(optionsAxios(UTIL.GET, '/template'));
-        templateData = templateData.templates;
-        const toReturn = templateData.filter(template => fetchedTemplates.includes(template.id));
-        return toReturn;
-      }
-      catch (error){
-        LOG.error(error);
-      }
     },
   },
 };
