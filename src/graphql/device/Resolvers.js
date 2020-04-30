@@ -12,7 +12,6 @@ const optionsAxios = ((method, url) => UTIL.optionsAxios(method, url, params.tok
 
 const Resolvers = {
   Query: {
-
     async getDeviceById(root, { deviceId }, context) {
       setToken(context.token);
 
@@ -42,13 +41,23 @@ const Resolvers = {
 
     async getDevices(root, params) {
       // building the request string
-      let requestParameters = {
-        page_size: params.page['size'] || 20,
-        page_num: params.page['number'] || 1,
+      let requestParameters = {};
+      if (params.hasOwnProperty('page') && params.page.size != null) {
+        requestParameters.page_size = params.page.size;
       }
-      if (params.hasOwnProperty('filter') && params.filter.label != null ){
+      else {
+        requestParameters.page_size = 20;
+      }
+      if (params.hasOwnProperty('page') && params.page.number != null) {
+        requestParameters.page_num = params.page.number;
+      }
+      else {
+        requestParameters.page_num = 1;
+      }
+      if (params.hasOwnProperty('filter') && params.filter.label != null) {
         requestParameters.label = params.filter.label;
       }
+
       let requestString = '/device?';
       const keys = Object.keys(requestParameters);
       const last = keys[keys.length - 1];
@@ -76,68 +85,89 @@ const Resolvers = {
       }
     },
 
-    getDeviceHistory(root, params){
-      const history = [];
+    async getDeviceHistory(root, params) {
+      let history = [];
       const keys = Object.keys(params.input);
       keys.shift();
       const requestStringPt1 = '/history/device/';
       let requestStringPt2 = '/history';
-      
+
       if (keys.length != 0) {
         requestStringPt2 += '?';
         const lastKey = keys[keys.length - 1];
         keys.forEach((element) => {
-          if (element === lastKey) {
-            requestStringPt2 += `${element}=${params[element]}`;
-          } else {
-            requestStringPt2 += `${element}=${params[element]}&`;
-          }
+          requestStringPt2 += `${element}=${params.input[element]}&`;
         });
       }
-      //builds request string, format history and pushes to the result to the returning array
-      params.input.devices.forEach(async (obj) => {
-        let requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}`;
-        try {
-          const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-          const { data: deviceInfo } = await axios(optionsAxios(UTIL.GET, `/device/${obj.deviceID}`));
-          let readings = [];
-          
-          //Reading "attribute"
-          Object.keys(fetchedData).forEach(attribute => {
-            //element is the object that contains a reading
-            fetchedData[attribute].forEach((element) => {
 
-              let valtype ='';
-              Object.keys(deviceInfo.attrs).forEach((templateId) => {
-                deviceInfo.attrs[templateId].forEach((attrData) => {
-                  if (attrData.label === element.attr) {
-                    valtype = formatValueType(attrData.value_type);
-                  }
-                });
-              });
+      let historyPromiseArray = [];
+      let fetchedData = [];
+      let devicePromiseArray = [];
+      let devicesInfo = [];
 
-              readings.push({
-                label: element.attr,
-                valueType: valtype,
-                value: element.value,
-                timestamp: element.ts
-              });
-            });
-            
+      params.input.devices.forEach((obj) => {
+        obj.attrs.forEach(attr => {
+          let requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}&attr=${attr}`;
+          const promiseHistory = axios(optionsAxios(UTIL.GET, requestString)).catch(err => {
+            LOG.error(`Device id ${obj.id}: ${err}`);
+            return Promise.resolve(null);
           });
-
-          history.push({
-            deviceID: obj.deviceID,
-            label: deviceInfo.label,
-            attrs: readings
-          });
-
-          return history;
-
-        } catch (error) {
-          LOG.error(error);
-        }
+          historyPromiseArray.push(promiseHistory);
+        });
+        const promiseDevice = axios(optionsAxios(UTIL.GET, `/device/${obj.deviceID}`));
+        devicePromiseArray.push(promiseDevice);
       });
+
+      await Promise.all(historyPromiseArray).then(values => {
+        Object.keys(values).forEach(keys => {
+          if(values[keys] != null){
+          values[keys].data.forEach(entry => {
+            fetchedData.push(entry);
+          })}
+        })
+      }).catch(error => {
+        LOG.error(`${error}`);
+      });
+      await Promise.all(devicePromiseArray).then(values => {
+        Object.keys(values).forEach(keys => {
+          devicesInfo.push(values[keys].data);
+        })
+      }).catch(error => {
+        LOG.error(error);
+      });
+
+      devicesInfo.forEach(deviceObj => {
+        //listing device attributes so a  reading's value type can be defined
+        let deviceAttributes = {};
+        Object.keys(deviceObj.attrs).forEach(key => {
+          deviceObj.attrs[key].forEach(attr => {
+            deviceAttributes[attr.label] = {
+              label: attr.label,
+              valueType: attr.value_type
+            }
+          });
+        });
+        
+        let readings = [];
+          fetchedData.forEach(data => {
+            if (deviceObj.id === data.device_id) {
+              readings.push({
+                label: data.attr,
+                valueType: formatValueType(deviceAttributes[data.attr].valueType),
+                value: data.value,
+                timestamp: data.ts,
+              })
+            }
+          });
+
+          if (readings.length != 0){
+          history.push({
+            deviceID: deviceObj.id,
+            label: deviceObj.label,
+            attrs: readings,
+          });}
+      });
+      return history;
     },
   },
 
@@ -158,7 +188,7 @@ const Resolvers = {
   },
 };
 
-function formatValueType(valType){
+function formatValueType(valType) {
   let valueType = '';
   switch (valType) {
     case 'integer':
