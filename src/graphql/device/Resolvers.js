@@ -87,16 +87,15 @@ const Resolvers = {
 
     async getDeviceHistory(root, params) {
       let history = [];
-      const keys = Object.keys(params.input);
+      const keys = Object.keys(params.filter);
       keys.shift();
       const requestStringPt1 = '/history/device/';
       let requestStringPt2 = '/history';
 
       if (keys.length != 0) {
         requestStringPt2 += '?';
-        const lastKey = keys[keys.length - 1];
         keys.forEach((element) => {
-          requestStringPt2 += `${element}=${params.input[element]}&`;
+          requestStringPt2 += `${element}=${params.filter[element]}&`;
         });
       }
 
@@ -105,7 +104,7 @@ const Resolvers = {
       let devicePromiseArray = [];
       let devicesInfo = [];
 
-      params.input.devices.forEach((obj) => {
+      params.filter.devices.forEach((obj) => {
         obj.attrs.forEach(attr => {
           let requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}&attr=${attr}`;
           const promiseHistory = axios(optionsAxios(UTIL.GET, requestString)).catch(err => {

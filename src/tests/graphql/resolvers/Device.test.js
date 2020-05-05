@@ -1,6 +1,6 @@
 const axios = require('axios');
 const Resolvers = require('../../../graphql/device/Resolvers');
-const { device1, deviceReading, deviceList, Thermometer } = require('../../apiMock/device');
+const { device1, deviceReading, deviceList} = require('../../apiMock/device');
 
 jest.mock('axios');
 
@@ -37,7 +37,7 @@ it('should return a list of history entries', async () => {
 
   const root = {};
   const params = {
-    input: {
+    filter: {
       devices: [{ deviceID: "0998", attrs: ["temperature"] }],
       lastN: 3,
     }
@@ -132,7 +132,7 @@ it('should return empty array', async () => {
 
   const root = {};
   const params = {
-    input: {
+    filter: {
       devices: [{ deviceID: "0998", attrs: ["temperature"] }],
       lastN: 3,
     }

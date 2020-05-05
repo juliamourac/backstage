@@ -21,31 +21,28 @@ type Device {
   
  # A paginated list of Devices.
  type DeviceListPage {
-    # Identifies the total count of item.
     totalPages: Int!
-    # Indicate the current Page.
     currentPage: Int!
-    # List of Devices.
     devices: [Device]
  }
   
+ # number: Identifies the page number.
+ # size: Identifies the page size.
  input PageInput {
-    # Identifies the page number.
-    number: Int # default = 1
-    # Identifies the page size.
-    size: Int # default = 20
+    number: Int
+    size: Int
  }
   
+ # Return only devices that are named accordingly (prefix or suffix match)
  input FilterDeviceInput {
-    # Return only devices that are named accordingly
-    label: String # (prefix or suffix match)
+    label: String
  }
   
  input HistoryInput {
     devices: [HistoryDeviceInput]!
-    beginTime: String # unix time,usar scalar DateTime?? será optional qdo tem lastN ?? 
-    endTime: String # corrente caso vazio,usar scalar DateTime??
-    lastN: Int # optional, default: ????
+    beginTime: String
+    endTime: String
+    lastN: Int
  }
   
  input HistoryDeviceInput{
@@ -55,9 +52,9 @@ type Device {
   
  type HistoryAttr {
     label: String!
-    valueType: ValueType! #tipos da dojot
+    valueType: ValueType!
     value: String!
-    timestamp: String! #unix time, usar scalar DateTime??
+    timestamp: String!
  }
   
  type History{
