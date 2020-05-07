@@ -117,12 +117,14 @@ const Resolvers = {
         devicePromiseArray.push(promiseDevice);
       });
 
+      //API calls are made and results are saved in arrays
       await Promise.all(historyPromiseArray).then(values => {
         Object.keys(values).forEach(keys => {
-          if(values[keys] != null){
-          values[keys].data.forEach(entry => {
-            fetchedData.push(entry);
-          })}
+          if (values[keys] != null) {
+            values[keys].data.forEach(entry => {
+              fetchedData.push(entry);
+            })
+          }
         })
       }).catch(error => {
         LOG.error(`${error}`);
@@ -146,26 +148,28 @@ const Resolvers = {
             }
           });
         });
-        
-        let readings = [];
-          fetchedData.forEach(data => {
-            if (deviceObj.id === data.device_id) {
-              readings.push({
-                label: data.attr,
-                valueType: formatValueType(deviceAttributes[data.attr].valueType),
-                value: data.value,
-                timestamp: data.ts,
-              })
-            }
-          });
 
-          if (readings.length != 0){
+        let readings = [];
+        fetchedData.forEach(data => {
+          if (deviceObj.id === data.device_id) {
+            readings.push({
+              label: data.attr,
+              valueType: formatValueType(deviceAttributes[data.attr].valueType),
+              value: data.value,
+              timestamp: data.ts,
+            })
+          }
+        });
+
+        if (readings.length != 0) {
           history.push({
             deviceID: deviceObj.id,
             label: deviceObj.label,
             attrs: readings,
-          });}
+          });
+        }
       });
+
       return history;
     },
   },

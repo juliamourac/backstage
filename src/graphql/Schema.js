@@ -17,11 +17,7 @@ const query = [`
       getDevices(page: PageInput, filter: FilterDeviceInput): [DeviceListPage]
       getDeviceById(deviceId: String!): Device
       getDeviceHistory(filter: HistoryInput!): [History]
-      getConfig(tenant: String!, user:String!): Config
     }
-  type Mutation {
-    updateConfig(tenant: String!, user:String!, config: ConfigInput!): Config!
-  }
 `];
 
 // Put schema together into one array of schema strings
