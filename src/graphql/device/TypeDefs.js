@@ -66,14 +66,6 @@ type Device {
     label: String!
     attrs: [HistoryAttr]
  }
-  
- type Config {
-    config: String!
- }
-  
- input ConfigInput {
-    config: String!
- }
 `];
 
 module.exports = TypeDefs;
