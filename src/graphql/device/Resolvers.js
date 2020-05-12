@@ -72,9 +72,8 @@ const Resolvers = {
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
         const deviceList = ([{
-          totalCount: fetchedData.devices.length,
-          hasNextPage: fetchedData.pagination.has_next,
-          hasPreviousPage: fetchedData.pagination.page != 1,
+          totalPages: fetchedData.devices.length,
+          currentPage: fetchedData.pagination.page,
           devices: fetchedData.devices,
         }]);
 
@@ -86,9 +85,11 @@ const Resolvers = {
     },
 
     async getDeviceHistory(root, params) {
-      let history = [];
+      const history = [];
       const keys = Object.keys(params.filter);
-      keys.shift();
+      //removing element "devices" from list so it isn't appended to requestString
+      const index = keys.indexOf("devices");
+      keys.splice(index,1);
       const requestStringPt1 = '/history/device/';
       let requestStringPt2 = '/history';
 
@@ -120,7 +121,7 @@ const Resolvers = {
       //API calls are made and results are saved in arrays
       await Promise.all(historyPromiseArray).then(values => {
         Object.keys(values).forEach(keys => {
-          if (values[keys] != null) {
+          if (values[keys]) {
             values[keys].data.forEach(entry => {
               fetchedData.push(entry);
             })
@@ -129,6 +130,7 @@ const Resolvers = {
       }).catch(error => {
         LOG.error(`${error}`);
       });
+
       await Promise.all(devicePromiseArray).then(values => {
         Object.keys(values).forEach(keys => {
           devicesInfo.push(values[keys].data);
@@ -138,6 +140,7 @@ const Resolvers = {
       });
 
       devicesInfo.forEach(deviceObj => {
+        if (deviceObj === null || deviceObj === undefined){return;}
         //listing device attributes so a  reading's value type can be defined
         let deviceAttributes = {};
         Object.keys(deviceObj.attrs).forEach(key => {
@@ -169,7 +172,7 @@ const Resolvers = {
           });
         }
       });
-
+      
       return history;
     },
   },
