@@ -41,8 +41,8 @@ type Device {
  input HistoryInput {
     """list of devices which attributes will be retrieved"""
     devices: [HistoryDeviceInput]!
-    beginTime: String
-    endTime: String
+    dateFrom: String
+    dateTo: String
     lastN: Int
  }
  
