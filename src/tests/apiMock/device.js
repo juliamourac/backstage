@@ -29,7 +29,7 @@ const deviceList = JSON.parse[
       {
         "id": "17e0d0",
         "label": "disp11",
-        "attrs": [
+        "attrs": {"1":[
           {
             "label": "attr1",
             "type": "dynamic",
@@ -37,7 +37,7 @@ const deviceList = JSON.parse[
             "value": null,
             "meta": null
           }
-        ],
+        ]},
         "templates": [
           {
             "label": "Template",
@@ -48,7 +48,7 @@ const deviceList = JSON.parse[
       {
         "id": "65f9d7",
         "label": "disp10",
-        "attrs": [
+        "attrs": {"1": [
           {
             "label": "attr1",
             "type": "dynamic",
@@ -56,7 +56,7 @@ const deviceList = JSON.parse[
             "value": null,
             "meta": null
           }
-        ],
+        ]},
         "templates": [
           {
             "label": "Template",
@@ -64,9 +64,15 @@ const deviceList = JSON.parse[
           }
         ]
       }
-    ]
+    ],
+    "pagination": {
+      "has_next": false,
+      "next_page": null,
+      "page": 1,
+      "total": 1
+    }
   }
 ];
 
 
-module.exports = { device1, deviceList};
+module.exports = { device1 };

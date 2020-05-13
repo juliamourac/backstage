@@ -1,6 +1,6 @@
 const axios = require('axios');
 const Resolvers = require('../../../graphql/device/Resolvers');
-const { device1, deviceReading, deviceList } = require('../../apiMock/device');
+const { device1, deviceReading } = require('../../apiMock/device');
 
 jest.mock('axios');
 
@@ -22,12 +22,152 @@ it('should get a device', () => {
 
 
 it('should get a list of devices', () => {
-  axios.mockImplementationOnce(() => Promise.resolve({ data: deviceList }));
+  axios.mockResolvedValue({
+    'data': {
+      "devices": [
+        {
+          "id": "124e15",
+          "label": "disp12",
+          "attrs": [
+            {
+              "label": "attr1",
+              "type": "dynamic",
+              "value_type": "NUMBER",
+              "value": null,
+              "meta": null
+            }
+          ],
+          "templates": [
+            {
+              "label": "Template",
+              "id": 1
+            }
+          ]
+        },
+        {
+          "id": "17e0d0",
+          "label": "disp11",
+          "attrs": {
+            "1": [
+              {
+                "label": "attr1",
+                "type": "dynamic",
+                "value_type": "NUMBER",
+                "value": null,
+                "meta": null
+              }
+            ]
+          },
+          "templates": [
+            {
+              "label": "Template",
+              "id": 1
+            }
+          ]
+        },
+        {
+          "id": "65f9d7",
+          "label": "disp10",
+          "attrs": {
+            "1": [
+              {
+                "label": "attr1",
+                "type": "dynamic",
+                "value_type": "NUMBER",
+                "value": null,
+                "meta": null
+              }
+            ]
+          },
+          "templates": [
+            {
+              "label": "Template",
+              "id": 1
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "has_next": false,
+        "next_page": null,
+        "page": 1,
+        "total": 1
+      }
+    }
+  });
   const root = {};
   const params = { page: { number: 1, size: 4 }, filter: { label: "d" } };
 
   return Resolvers.Query.getDevices(root, params).then((output) => {
-    expect(output).toEqual(deviceList)
+    expect(output).toEqual([
+      {
+        "totalPages": 1,
+        "currentPage": 1,
+        "devices": [
+          {
+            "attrs": [
+              {
+                "label": "attr1",
+                "meta": null,
+                "type": "dynamic",
+                "value": null,
+                "value_type": "NUMBER"
+              }
+            ],
+            "id": "124e15",
+            "label": "disp12",
+            "templates": [
+              {
+                "id": 1,
+                "label": "Template"
+              }
+            ]
+          },
+          {
+            "attrs": {
+              "1": [
+                {
+                  "label": "attr1",
+                  "meta": null,
+                  "type": "dynamic",
+                  "value": null,
+                  "value_type": "NUMBER"
+                }
+              ]
+            },
+            "id": "17e0d0",
+            "label": "disp11",
+            "templates": [
+              {
+                "id": 1,
+                "label": "Template"
+              }
+            ]
+          },
+          {
+            "attrs": {
+              "1": [
+                {
+                  "label": "attr1",
+                  "meta": null,
+                  "type": "dynamic",
+                  "value": null,
+                  "value_type": "NUMBER"
+                }
+              ]
+            },
+            "id": "65f9d7",
+            "label": "disp10",
+            "templates": [
+              {
+                "id": 1,
+                "label": "Template"
+              }
+            ]
+          }
+        ]
+      }
+    ])
   });
 });
 
@@ -676,4 +816,54 @@ it('should return history from 1 device', async () => {
       "timestamp": "2018-03-22T13:46:21.535000Z",
     }]
   }]);
+});
+
+it ('should return formatted device information', () => {
+  const device = {
+    "attrs": {
+      "1": [
+        {
+          "created": "2020-05-06T16:19:32.247307+00:00",
+          "id": 1,
+          "is_static_overridden": false,
+          "label": "hue",
+          "static_value": "",
+          "template_id": "1",
+          "type": "dynamic",
+          "value_type": "string"
+        },
+        {
+          "created": "2020-05-06T16:19:32.397514+00:00",
+          "id": 2,
+          "is_static_overridden": false,
+          "label": "intensity",
+          "static_value": "",
+          "template_id": "1",
+          "type": "dynamic",
+          "value_type": "integer"
+        },
+        {
+          "created": "2020-05-06T16:19:32.397514+00:00",
+          "id": 2,
+          "is_static_overridden": false,
+          "label": "intensity",
+          "static_value": "",
+          "template_id": "1",
+          "type": "static",
+          "value": 3,
+          "value_type": "integer"
+        }
+      ]
+    },
+    "created": "2020-05-06T16:19:46.185424+00:00",
+    "id": "8aa0f9",
+    "label": "Living_Room",
+    "templates": [
+      1
+    ]
+  };
+
+  const expectedResult = [{ "created": "2020-05-06T16:19:32.247307+00:00", "id": 1, "is_static_overridden": false, "label": "hue", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "STRING" }, { "created": "2020-05-06T16:19:32.397514+00:00", "id": 2, "is_static_overridden": false, "label": "intensity", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "NUMBER" }];
+
+  return expect(Resolvers.Device.attrs(device)).toEqual(expectedResult);
 });

@@ -68,17 +68,14 @@ const Resolvers = {
           requestString += `${element}=${requestParameters[element]}&`;
         }
       });
-
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
         const deviceList = ([{
-          totalPages: fetchedData.devices.length,
+          totalPages: fetchedData.pagination.total,
           currentPage: fetchedData.pagination.page,
           devices: fetchedData.devices,
         }]);
-
         return deviceList;
-
       } catch (error) {
         LOG.error(error);
       }
@@ -89,7 +86,7 @@ const Resolvers = {
       const keys = Object.keys(params.filter);
       //removing element "devices" from list so it isn't appended to requestString
       const index = keys.indexOf("devices");
-      keys.splice(index,1);
+      keys.splice(index, 1);
       const requestStringPt1 = '/history/device/';
       let requestStringPt2 = '/history';
 
@@ -121,7 +118,7 @@ const Resolvers = {
       //API calls are made and results are saved in arrays
       await Promise.all(historyPromiseArray).then(values => {
         Object.keys(values).forEach(keys => {
-          if (values[keys]) {
+          if (values[keys] != null && values[keys] != undefined ) {
             values[keys].data.forEach(entry => {
               fetchedData.push(entry);
             })
@@ -133,14 +130,16 @@ const Resolvers = {
 
       await Promise.all(devicePromiseArray).then(values => {
         Object.keys(values).forEach(keys => {
-          devicesInfo.push(values[keys].data);
+          if (values[keys] != null && values[keys] != undefined) {
+            devicesInfo.push(values[keys].data);
+          }
         })
       }).catch(error => {
         LOG.error(error);
       });
 
       devicesInfo.forEach(deviceObj => {
-        if (deviceObj === null || deviceObj === undefined){return;}
+        if (deviceObj === null || deviceObj === undefined) { return; }
         //listing device attributes so a  reading's value type can be defined
         let deviceAttributes = {};
         Object.keys(deviceObj.attrs).forEach(key => {
@@ -172,7 +171,7 @@ const Resolvers = {
           });
         }
       });
-      
+
       return history;
     },
   },
@@ -183,11 +182,13 @@ const Resolvers = {
       const fetchedKeys = Object.keys(fetchedAttrs);
 
       const toReturn = [];
-      fetchedKeys.forEach((element) => {
-        if (fetchedAttrs[element][0].type === 'dynamic') {
-          fetchedAttrs[element][0].value_type = formatValueType(fetchedAttrs[element][0].value_type);
-          toReturn.push(fetchedAttrs[element][0]);
-        }
+      fetchedKeys.forEach((template) => {
+        fetchedAttrs[template].forEach((attribute) => {
+          if (attribute.type === 'dynamic') {
+            attribute.value_type = formatValueType(attribute.value_type);
+            toReturn.push(attribute);
+          }
+        })
       });
       return toReturn;
     },
