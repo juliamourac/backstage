@@ -1,6 +1,5 @@
 const axios = require('axios');
 const Resolvers = require('../../../graphql/device/Resolvers');
-const { device1, deviceReading } = require('../../apiMock/device');
 
 jest.mock('axios');
 
@@ -8,15 +7,100 @@ afterEach(() => {
   axios.mockReset();
 });
 
-it('should get a device', () => {
+it('should return a device', () => {
   const root = {};
-  const params = { deviceId: "124e15" };
+  const params = { deviceId: "10cf" };
   const context = {};
 
-  axios.mockImplementationOnce(() => Promise.resolve({ data: device1 }));
+  axios.mockImplementationOnce(() => Promise.resolve({data: {
+    "attrs": {
+      "4865": [
+        {
+          "created": "2017-12-20T18:14:43.994796+00:00",
+          "id": 30,
+          "label": "tag_temperature",
+          "template_id": "4865",
+          "type": "dynamic",
+          "value_type": "integer"
+        },
+        {
+          "created": "2017-12-20T18:14:44.014065+00:00",
+          "id": 31,
+          "label": "tag_pressure",
+          "template_id": "4865",
+          "type": "dynamic",
+          "value_type": "float"
+        },
+        {
+          "created": "2017-12-20T18:14:44.015474+00:00",
+          "id": 32,
+          "label": "tag_led",
+          "template_id": "4865",
+          "type": "dynamic",
+          "value_type": "bool"
+        },
+        {
+          "created": "2017-12-20T18:14:44.016804+00:00",
+          "id": 33,
+          "label": "tag_fan",
+          "template_id": "4865",
+          "type": "dynamic",
+          "value_type": "bool"
+        },
+        {
+          "created": "2017-12-20T18:14:44.016804+00:00",
+          "id": 34,
+          "label": "location",
+          "template_id": "4865",
+          "type": "geo:point"
+        },
+        {
+          "created": "2017-12-20T18:14:44.016804+00:00",
+          "id": 34,
+          "label": "customName",
+          "template_id": "4865",
+          "type": "string"
+        },
+        {
+          "created": "2017-12-20T18:14:44.016804+00:00",
+          "id": 34,
+          "label": "someact",
+          "template_id": "4865",
+          "type": "actuator"
+        }
+      ]
+    },
+    "created": "2017-12-20T18:15:08.864677+00:00",
+    "id": "10cf",
+    "label": "sensor-4",
+    "templates": [
+      "4865"
+    ]
+  }}));
 
   return Resolvers.Query.getDeviceById(root, params, context).then((output) => {
-    expect(output).toEqual(device1)
+    expect(output).toEqual({
+      "attrs": [
+        {
+          "label": "tag_temperature",
+          "value_type": "NUMBER"
+        },
+        {
+          "label": "tag_pressure",
+          "value_type": "NUMBER"
+        },
+        {
+          "label": "tag_led",
+          "value_type": "BOOLEAN"
+        },
+        {
+          "label": "tag_fan",
+          "value_type": "BOOLEAN"
+        }
+      ],
+      "id": "10cf",
+      "label": "sensor-4"
+    })
   });
 });
 
@@ -26,64 +110,129 @@ it('should get a list of devices', () => {
     'data': {
       "devices": [
         {
-          "id": "124e15",
-          "label": "disp12",
-          "attrs": [
-            {
-              "label": "attr1",
-              "type": "dynamic",
-              "value_type": "NUMBER",
-              "value": null,
-              "meta": null
-            }
-          ],
-          "templates": [
-            {
-              "label": "Template",
-              "id": 1
-            }
-          ]
-        },
-        {
-          "id": "17e0d0",
-          "label": "disp11",
           "attrs": {
-            "1": [
+            "2": [
               {
-                "label": "attr1",
+                "created": "2020-05-14T18:15:47.307374+00:00",
+                "id": 6,
+                "is_static_overridden": false,
+                "label": "dina2",
+                "static_value": "",
+                "template_id": "2",
                 "type": "dynamic",
-                "value_type": "NUMBER",
-                "value": null,
-                "meta": null
+                "value_type": "float"
+              },
+              {
+                "created": "2020-05-14T18:15:47.306332+00:00",
+                "id": 5,
+                "is_static_overridden": false,
+                "label": "static",
+                "static_value": "true",
+                "template_id": "2",
+                "type": "static",
+                "value_type": "bool"
+              },
+              {
+                "created": "2020-05-14T18:15:47.305416+00:00",
+                "id": 4,
+                "is_static_overridden": false,
+                "label": "dinbool",
+                "static_value": "",
+                "template_id": "2",
+                "type": "dynamic",
+                "value_type": "bool"
               }
             ]
           },
+          "created": "2020-05-14T18:18:34.401142+00:00",
+          "id": "1b32ee",
+          "label": "device2",
           "templates": [
-            {
-              "label": "Template",
-              "id": 1
-            }
+            2
           ]
         },
         {
-          "id": "65f9d7",
-          "label": "disp10",
           "attrs": {
             "1": [
               {
-                "label": "attr1",
+                "created": "2020-05-14T17:25:25.437877+00:00",
+                "id": 1,
+                "is_static_overridden": false,
+                "label": "din",
+                "static_value": "",
+                "template_id": "1",
                 "type": "dynamic",
-                "value_type": "NUMBER",
-                "value": null,
-                "meta": null
+                "value_type": "string"
+              },
+              {
+                "created": "2020-05-14T17:25:25.439239+00:00",
+                "id": 2,
+                "is_static_overridden": false,
+                "label": "static",
+                "static_value": "20",
+                "template_id": "1",
+                "type": "static",
+                "value_type": "float"
+              },
+              {
+                "created": "2020-05-14T17:25:25.439943+00:00",
+                "id": 3,
+                "is_static_overridden": false,
+                "label": "actuate",
+                "static_value": "",
+                "template_id": "1",
+                "type": "actuator",
+                "value_type": "bool"
               }
             ]
           },
+          "created": "2020-05-14T17:25:38.646423+00:00",
+          "id": "457be",
+          "label": "deviceMock",
           "templates": [
-            {
-              "label": "Template",
-              "id": 1
-            }
+            1
+          ]
+        },
+        {
+          "attrs": {
+            "2": [
+              {
+                "created": "2020-05-14T18:15:47.307374+00:00",
+                "id": 6,
+                "is_static_overridden": false,
+                "label": "dina2",
+                "static_value": "",
+                "template_id": "2",
+                "type": "dynamic",
+                "value_type": "float"
+              },
+              {
+                "created": "2020-05-14T18:15:47.306332+00:00",
+                "id": 5,
+                "is_static_overridden": false,
+                "label": "static",
+                "static_value": "true",
+                "template_id": "2",
+                "type": "static",
+                "value_type": "bool"
+              },
+              {
+                "created": "2020-05-14T18:15:47.305416+00:00",
+                "id": 4,
+                "is_static_overridden": false,
+                "label": "dinbool",
+                "static_value": "",
+                "template_id": "2",
+                "type": "dynamic",
+                "value_type": "bool"
+              }
+            ]
+          },
+          "created": "2020-05-14T18:18:07.802635+00:00",
+          "id": "d16fe3",
+          "label": "device2Mock",
+          "templates": [
+            2
           ]
         }
       ],
@@ -99,75 +248,52 @@ it('should get a list of devices', () => {
   const params = { page: { number: 1, size: 4 }, filter: { label: "d" } };
 
   return Resolvers.Query.getDevices(root, params).then((output) => {
-    expect(output).toEqual([
-      {
-        "totalPages": 1,
-        "currentPage": 1,
-        "devices": [
-          {
-            "attrs": [
-              {
-                "label": "attr1",
-                "meta": null,
-                "type": "dynamic",
-                "value": null,
-                "value_type": "NUMBER"
-              }
-            ],
-            "id": "124e15",
-            "label": "disp12",
-            "templates": [
-              {
-                "id": 1,
-                "label": "Template"
-              }
-            ]
-          },
-          {
-            "attrs": {
-              "1": [
+    expect(output).toEqual(
+        {
+          "currentPage": 1,
+          "devices": [
+            {
+              "attrs": [
                 {
-                  "label": "attr1",
-                  "meta": null,
-                  "type": "dynamic",
-                  "value": null,
+                  "label": "dina2",
                   "value_type": "NUMBER"
-                }
-              ]
-            },
-            "id": "17e0d0",
-            "label": "disp11",
-            "templates": [
-              {
-                "id": 1,
-                "label": "Template"
-              }
-            ]
-          },
-          {
-            "attrs": {
-              "1": [
+                },
                 {
-                  "label": "attr1",
-                  "meta": null,
-                  "type": "dynamic",
-                  "value": null,
-                  "value_type": "NUMBER"
+                  "label": "dinbool",
+                  "value_type": "BOOLEAN"
                 }
-              ]
+              ],
+              "id": "1b32ee",
+              "label": "device2"
             },
-            "id": "65f9d7",
-            "label": "disp10",
-            "templates": [
-              {
-                "id": 1,
-                "label": "Template"
-              }
-            ]
-          }
-        ]
-      }
-    ])
+            {
+              "attrs": [
+                {
+                  "label": "din",
+                  "value_type": "STRING"
+                }
+              ],
+              "id": "457be",
+              "label": "deviceMock"
+            },
+            {
+              "attrs": [
+                {
+                  "label": "dina2",
+                  "value_type": "NUMBER"
+                },
+                {
+                  "label": "dinbool",
+                  "value_type": "BOOLEAN"
+                }
+              ],
+              "id": "d16fe3",
+              "label": "device2Mock"
+            }
+          ],
+          "totalPages": 1
+        }
+    )
   });
 });
 
@@ -282,9 +408,30 @@ it('should return empty array', async () => {
     }
   };
 
-  axios.mockResolvedValue('default value')
+  const devReading = {
+    'data': [{
+      "device_id": "0998",
+      "ts": "2018-03-22T13:47:07.050000Z",
+      "value": 10.6,
+      "attr": "temperature"
+    },
+    {
+      "device_id": "0998",
+      "ts": "2018-03-22T13:46:42.455000Z",
+      "value": 15.6,
+      "attr": "temperature"
+    },
+    {
+      "device_id": "0998",
+      "ts": "2018-03-22T13:46:21.535000Z",
+      "value": 36.5,
+      "attr": "temperature"
+    }]
+  };
+
+  axios.mockResolvedValue(null)
     .mockResolvedValueOnce(null)
-    .mockResolvedValueOnce(deviceReading);
+    .mockResolvedValueOnce(devReading);
 
   const result = await Resolvers.Query.getDeviceHistory(root, params);
   expect(result).toEqual([]);
@@ -479,216 +626,6 @@ it('should return history from 2 devices', async () => {
     }]);
 });
 
-//testing formatValueType function
-it('testing bool type', () => {
-  const device = {
-    'data': {
-      "attrs": {
-        "1": [
-          {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
-              {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "bool"
-              }
-            ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "bool"
-          }
-        ],
-      },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
-  };
-
-  axios.mockImplementationOnce(() => Promise.resolve(device));
-
-  return Resolvers.Query.getDeviceById({}, { deviceId: "0998" }, {}).then((output) => {
-    expect(output).toEqual({
-      id: "0998",
-      label: "Thermometer",
-      attrs: [{
-        label: "temperature",
-        type: "BOOLEAN"
-      }]
-    })
-  });
-});
-
-
-it('testing GEO type', () => {
-  const device = {
-    'data': {
-      "attrs": {
-        "1": [
-          {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
-              {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "geo:point"
-              }
-            ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "geo:point"
-          }
-        ],
-      },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
-  };
-
-  axios.mockImplementationOnce(() => Promise.resolve(device));
-
-  return Resolvers.Query.getDeviceById({}, { deviceId: "0998" }, {}).then((output) => {
-    expect(output).toEqual({
-      id: "0998",
-      label: "Thermometer",
-      attrs: [{
-        label: "temperature",
-        type: "GEO"
-      }]
-    })
-  });
-});
-
-it('testing UNDEFINED type', () => {
-  const device = {
-    'data': {
-      "attrs": {
-        "1": [
-          {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
-              {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "test"
-              }
-            ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "test"
-          }
-        ],
-      },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
-  };
-
-  axios.mockImplementationOnce(() => Promise.resolve(device));
-
-  return Resolvers.Query.getDeviceById({}, { deviceId: "0998" }, {}).then((output) => {
-    expect(output).toEqual({
-      id: "0998",
-      label: "Thermometer",
-      attrs: [{
-        label: "temperature",
-        type: "UNDEFINED"
-      }]
-    })
-  });
-});
-
-it('testing string type', () => {
-  const device = {
-    'data': {
-      "attrs": {
-        "1": [
-          {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
-              {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "string"
-              }
-            ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "string"
-          }
-        ],
-      },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
-  };
-
-  axios.mockImplementationOnce(() => Promise.resolve(device));
-
-  return Resolvers.Query.getDeviceById({}, { deviceId: "0998" }, {}).then((output) => {
-    expect(output).toEqual({
-      id: "0998",
-      label: "Thermometer",
-      attrs: [{
-        label: "temperature",
-        type: "STRING"
-      }]
-    })
-  });
-});
-
 it('should return history from 1 device', async () => {
   jest.mock('axios');
 
@@ -818,7 +755,7 @@ it('should return history from 1 device', async () => {
   }]);
 });
 
-it ('should return formatted device information', () => {
+/*it ('should return formatted device information', () => {
   const device = {
     "attrs": {
       "1": [
@@ -866,4 +803,4 @@ it ('should return formatted device information', () => {
   const expectedResult = [{ "created": "2020-05-06T16:19:32.247307+00:00", "id": 1, "is_static_overridden": false, "label": "hue", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "STRING" }, { "created": "2020-05-06T16:19:32.397514+00:00", "id": 2, "is_static_overridden": false, "label": "intensity", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "NUMBER" }];
 
   return expect(Resolvers.Device.attrs(device)).toEqual(expectedResult);
-});
+});*/

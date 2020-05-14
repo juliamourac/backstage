@@ -23,16 +23,14 @@ const Resolvers = {
         device.label = deviceData.label;
         device.attrs = [];
         Object.keys(deviceData.attrs).forEach((key) => {
-          for (let i = 0; i < deviceData.attrs[key].length; i += 1) {
-            let valueType = formatValueType(deviceData.attrs[key][i].value_type);
-
+          deviceData.attrs[key].forEach((attr) => {
+            if(attr.type != "dynamic") {return};
             device.attrs.push({
-              label: deviceData.attrs[key][i].label,
-              type: valueType,
+              label: attr.label,
+              value_type: formatValueType(attr.value_type)
             });
-          }
+          });
         });
-
         return (device);
       } catch (err) {
         LOG.error(err);
@@ -70,11 +68,33 @@ const Resolvers = {
       });
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-        const deviceList = ([{
+        const devices = [];
+
+        fetchedData.devices.forEach((device) => {
+          let attributes = [];
+          let keys = Object.keys(device.attrs);
+          keys.forEach((key) => {
+            device.attrs[key].forEach((attr) => {
+              if (attr.type != "dynamic") {return;}
+              attributes.push({
+                label: attr.label,
+                value_type: formatValueType(attr.value_type)
+              });
+            });
+          });
+          devices.push({
+            id: device.id,
+            label: device.label,
+            attrs: attributes,
+          });
+        });
+
+        const deviceList = ({
           totalPages: fetchedData.pagination.total,
           currentPage: fetchedData.pagination.page,
-          devices: fetchedData.devices,
-        }]);
+          devices: devices,
+        });
+
         return deviceList;
       } catch (error) {
         LOG.error(error);
@@ -139,14 +159,14 @@ const Resolvers = {
       });
 
       devicesInfo.forEach(deviceObj => {
-        if (deviceObj === null || deviceObj === undefined) { return; }
+        if (deviceObj === null || deviceObj === undefined || deviceObj.attrs === undefined) { return; }
         //listing device attributes so a  reading's value type can be defined
         let deviceAttributes = {};
         Object.keys(deviceObj.attrs).forEach(key => {
           deviceObj.attrs[key].forEach(attr => {
             deviceAttributes[attr.label] = {
               label: attr.label,
-              valueType: attr.value_type
+              valueType: formatValueType(attr.value_type)
             }
           });
         });
@@ -173,24 +193,6 @@ const Resolvers = {
       });
 
       return history;
-    },
-  },
-
-  Device: {
-    attrs(root) {
-      const fetchedAttrs = root.attrs;
-      const fetchedKeys = Object.keys(fetchedAttrs);
-
-      const toReturn = [];
-      fetchedKeys.forEach((template) => {
-        fetchedAttrs[template].forEach((attribute) => {
-          if (attribute.type === 'dynamic') {
-            attribute.value_type = formatValueType(attribute.value_type);
-            toReturn.push(attribute);
-          }
-        })
-      });
-      return toReturn;
     },
   },
 };
