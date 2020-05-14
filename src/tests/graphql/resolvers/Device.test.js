@@ -107,8 +107,8 @@ it('should return a device', () => {
 
 it('should get a list of devices', () => {
   axios.mockResolvedValue({
-    'data': {
-      "devices": [
+    data: {
+      devices: [
         {
           "attrs": {
             "2": [
@@ -236,16 +236,16 @@ it('should get a list of devices', () => {
           ]
         }
       ],
-      "pagination": {
-        "has_next": false,
-        "next_page": null,
-        "page": 1,
-        "total": 1
-      }
-    }
+      pagination: {
+        has_next: false,
+        next_page: null,
+        page: 1,
+        total: 1,
+      },
+    },
   });
   const root = {};
-  const params = { page: { number: 1, size: 4 }, filter: { label: "d" } };
+  const params = { page: { number: 1, size: 4 }, filter: { label: 'd' } };
 
   return Resolvers.Query.getDevices(root, params).then((output) => {
     expect(output).toEqual(
@@ -298,72 +298,71 @@ it('should get a list of devices', () => {
 });
 
 it('should return a list of history entries', async () => {
-
   jest.mock('axios');
 
   const root = {};
   const params = {
     filter: {
-      devices: [{ deviceID: "0998", attrs: ["temperature"] }],
+      devices: [{ deviceID: '0998', attrs: ['temperature'] }],
       lastN: 3,
-    }
+    },
   };
 
   const devReading = {
-    'data': [{
-      "device_id": "0998",
-      "ts": "2018-03-22T13:47:07.050000Z",
-      "value": 10.6,
-      "attr": "temperature"
+    data: [{
+      device_id: '0998',
+      ts: '2018-03-22T13:47:07.050000Z',
+      value: 10.6,
+      attr: 'temperature',
     },
     {
-      "device_id": "0998",
-      "ts": "2018-03-22T13:46:42.455000Z",
-      "value": 15.6,
-      "attr": "temperature"
+      device_id: '0998',
+      ts: '2018-03-22T13:46:42.455000Z',
+      value: 15.6,
+      attr: 'temperature',
     },
     {
-      "device_id": "0998",
-      "ts": "2018-03-22T13:46:21.535000Z",
-      "value": 36.5,
-      "attr": "temperature"
-    }]
+      device_id: '0998',
+      ts: '2018-03-22T13:46:21.535000Z',
+      value: 36.5,
+      attr: 'temperature',
+    }],
   };
   const dev = {
-    'data': {
-      "attrs": {
-        "1": [
+    data: {
+      attrs: {
+        1: [
           {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
+            created: '2020-03-09T17:10:34.364406+00:00',
+            id: 1,
+            is_static_overridden: false,
+            label: 'temperature',
+            metadata: [
               {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "string"
-              }
+                created: '2020-03-09T17:10:34.369905+00:00',
+                id: 2,
+                'is_static´_overridden': false,
+                label: 'protocol',
+                static_value: 'mqtt',
+                type: 'protocol',
+                updated: null,
+                value_type: 'string',
+              },
             ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "float"
-          }
+            static_value: '',
+            template_id: '1',
+            type: 'dynamic',
+            value_type: 'float',
+          },
         ],
       },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
+      created: '2020-03-17T14:33:43.176756+00:00',
+      id: '0998',
+      label: 'Thermometer',
+      templates: [
+        1,
+      ],
+    },
   };
 
   axios.mockResolvedValue('default value')
@@ -371,26 +370,26 @@ it('should return a list of history entries', async () => {
     .mockResolvedValueOnce(dev);
 
   const expectedResult = [{
-    deviceID: "0998",
-    label: "Thermometer",
+    deviceID: '0998',
+    label: 'Thermometer',
     attrs: [{
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 10.6,
-      "timestamp": "2018-03-22T13:47:07.050000Z",
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 10.6,
+      timestamp: '2018-03-22T13:47:07.050000Z',
     },
     {
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 15.6,
-      "timestamp": "2018-03-22T13:46:42.455000Z",
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 15.6,
+      timestamp: '2018-03-22T13:46:42.455000Z',
     },
     {
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 36.5,
-      "timestamp": "2018-03-22T13:46:21.535000Z",
-    }]
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 36.5,
+      timestamp: '2018-03-22T13:46:21.535000Z',
+    }],
   }];
 
   const result = await Resolvers.Query.getDeviceHistory(root, params);
@@ -403,9 +402,9 @@ it('should return empty array', async () => {
   const root = {};
   const params = {
     filter: {
-      devices: [{ deviceID: "0998", attrs: ["temperature"] }],
+      devices: [{ deviceID: '0998', attrs: ['temperature'] }],
       lastN: 3,
-    }
+    },
   };
 
   const devReading = {
@@ -441,124 +440,126 @@ it('should return history from 2 devices', async () => {
   jest.mock('axios');
 
   const devices = [{
-    'data': {
-      "attrs": {
-        "1": [
+    data: {
+      attrs: {
+        1: [
           {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
+            created: '2020-03-09T17:10:34.364406+00:00',
+            id: 1,
+            is_static_overridden: false,
+            label: 'temperature',
+            metadata: [
               {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "string"
-              }
+                created: '2020-03-09T17:10:34.369905+00:00',
+                id: 2,
+                'is_static´_overridden': false,
+                label: 'protocol',
+                static_value: 'mqtt',
+                type: 'protocol',
+                updated: null,
+                value_type: 'string',
+              },
             ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "float"
-          }
+            static_value: '',
+            template_id: '1',
+            type: 'dynamic',
+            value_type: 'float',
+          },
         ],
       },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
+      created: '2020-03-17T14:33:43.176756+00:00',
+      id: '0998',
+      label: 'Thermometer',
+      templates: [
+        1,
+      ],
+    },
   }, {
-    'data': {
-      "attrs": {
-        "1": [
+    data: {
+      attrs: {
+        1: [
           {
-            "created": "2020-05-06T16:19:32.247307+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "hue",
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "string"
+            created: '2020-05-06T16:19:32.247307+00:00',
+            id: 1,
+            is_static_overridden: false,
+            label: 'hue',
+            static_value: '',
+            template_id: '1',
+            type: 'dynamic',
+            value_type: 'string',
           },
           {
-            "created": "2020-05-06T16:19:32.397514+00:00",
-            "id": 2,
-            "is_static_overridden": false,
-            "label": "intensity",
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "integer"
-          }
-        ]
+            created: '2020-05-06T16:19:32.397514+00:00',
+            id: 2,
+            is_static_overridden: false,
+            label: 'intensity',
+            static_value: '',
+            template_id: '1',
+            type: 'dynamic',
+            value_type: 'integer',
+          },
+        ],
       },
-      "created": "2020-05-06T16:19:46.185424+00:00",
-      "id": "8aa0f9",
-      "label": "Living_Room",
-      "templates": [
-        1
-      ]
-    }
+      created: '2020-05-06T16:19:46.185424+00:00',
+      id: '8aa0f9',
+      label: 'Living_Room',
+      templates: [
+        1,
+      ],
+    },
   }];
 
   const historyData = {
     0: {
-      "data": [{
-        "device_id": "0998",
-        "ts": "2018-03-22T13:47:07.050000Z",
-        "value": 10.6,
-        "attr": "temperature"
+      data: [{
+        device_id: '0998',
+        ts: '2018-03-22T13:47:07.050000Z',
+        value: 10.6,
+        attr: 'temperature',
       },
       {
-        "device_id": "0998",
-        "ts": "2018-03-22T13:46:42.455000Z",
-        "value": 15.6,
-        "attr": "temperature"
+        device_id: '0998',
+        ts: '2018-03-22T13:46:42.455000Z',
+        value: 15.6,
+        attr: 'temperature',
       },
       {
-        "device_id": "0998",
-        "ts": "2018-03-22T13:46:21.535000Z",
-        "value": 36.5,
-        "attr": "temperature"
-      }]
-    }, 1: {
-      "data": [{
-        "attr": "hue",
-        "value": "#4785FF",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:48:50.408000Z",
-        "metadata": {}
+        device_id: '0998',
+        ts: '2018-03-22T13:46:21.535000Z',
+        value: 36.5,
+        attr: 'temperature',
+      }],
+    },
+    1: {
+      data: [{
+        attr: 'hue',
+        value: '#4785FF',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:48:50.408000Z',
+        metadata: {},
       },
       {
-        "attr": "hue",
-        "value": "#4785FF",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:25:13.366000Z",
-        "metadata": {}
+        attr: 'hue',
+        value: '#4785FF',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:25:13.366000Z',
+        metadata: {},
       },
       {
-        "attr": "hue",
-        "value": "#414DE8",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:25:06.697000Z",
-        "metadata": {}
-      }]
-    }, 2: [{
-      "attr": "intensity",
-      "value": 5,
-      "device_id": "8aa0f9",
-      "ts": "2020-05-06T16:48:50.408000Z",
-      "metadata": {}
-    }]
+        attr: 'hue',
+        value: '#414DE8',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:25:06.697000Z',
+        metadata: {},
+      }],
+    },
+    2: [{
+      attr: 'intensity',
+      value: 5,
+      device_id: '8aa0f9',
+      ts: '2020-05-06T16:48:50.408000Z',
+      metadata: {},
+    }],
   };
 
   axios.mockResolvedValue('default value')
@@ -570,151 +571,153 @@ it('should return history from 2 devices', async () => {
 
   const params = {
     filter: {
-      devices: [{ deviceID: "0998", attrs: ["temperature"] }, { deviceID: "8aa0f9", attrs: ["hue", "intensity"] }],
-      lastN: 3
-    }
+      devices: [{ deviceID: '0998', attrs: ['temperature'] }, { deviceID: '8aa0f9', attrs: ['hue', 'intensity'] }],
+      lastN: 3,
+    },
   };
 
   const result = await Resolvers.Query.getDeviceHistory({}, params);
   expect(result).toEqual([{
-      "attrs": [
-        {
-          "label": "temperature",
-          "timestamp": "2018-03-22T13:47:07.050000Z",
-          "value": 10.6,
-          "valueType": "NUMBER"
-        },
-        {
-          "label": "temperature",
-          "timestamp": "2018-03-22T13:46:42.455000Z",
-          "value": 15.6,
-          "valueType": "NUMBER"
-        },
-        {
-          "label": "temperature",
-          "timestamp": "2018-03-22T13:46:21.535000Z",
-          "value": 36.5,
-          "valueType": "NUMBER"
-        }
-      ],
-      "deviceID": "0998",
-      "label": "Thermometer"
-    },
-    {
-      "attrs": [
-        {
-          "label": "hue",
-          "timestamp": "2020-05-06T16:48:50.408000Z",
-          "value": "#4785FF",
-          "valueType": "STRING"
-        },
-        {
-          "label": "hue",
-          "timestamp": "2020-05-06T16:25:13.366000Z",
-          "value": "#4785FF",
-          "valueType": "STRING"
-        },
-        {
-          "label": "hue",
-          "timestamp": "2020-05-06T16:25:06.697000Z",
-          "value": "#414DE8",
-          "valueType": "STRING"
-        }
-      ],
-      "deviceID": "8aa0f9",
-      "label": "Living_Room"
-    }]);
+    attrs: [
+      {
+        label: 'temperature',
+        timestamp: '2018-03-22T13:47:07.050000Z',
+        value: 10.6,
+        valueType: 'NUMBER',
+      },
+      {
+        label: 'temperature',
+        timestamp: '2018-03-22T13:46:42.455000Z',
+        value: 15.6,
+        valueType: 'NUMBER',
+      },
+      {
+        label: 'temperature',
+        timestamp: '2018-03-22T13:46:21.535000Z',
+        value: 36.5,
+        valueType: 'NUMBER',
+      },
+    ],
+    deviceID: '0998',
+    label: 'Thermometer',
+  },
+  {
+    attrs: [
+      {
+        label: 'hue',
+        timestamp: '2020-05-06T16:48:50.408000Z',
+        value: '#4785FF',
+        valueType: 'STRING',
+      },
+      {
+        label: 'hue',
+        timestamp: '2020-05-06T16:25:13.366000Z',
+        value: '#4785FF',
+        valueType: 'STRING',
+      },
+      {
+        label: 'hue',
+        timestamp: '2020-05-06T16:25:06.697000Z',
+        value: '#414DE8',
+        valueType: 'STRING',
+      },
+    ],
+    deviceID: '8aa0f9',
+    label: 'Living_Room',
+  }]);
 });
 
 it('should return history from 1 device', async () => {
   jest.mock('axios');
 
   const device = {
-    'data': {
-      "attrs": {
-        "1": [
+    data: {
+      attrs: {
+        1: [
           {
-            "created": "2020-03-09T17:10:34.364406+00:00",
-            "id": 1,
-            "is_static_overridden": false,
-            "label": "temperature",
-            "metadata": [
+            created: '2020-03-09T17:10:34.364406+00:00',
+            id: 1,
+            is_static_overridden: false,
+            label: 'temperature',
+            metadata: [
               {
-                "created": "2020-03-09T17:10:34.369905+00:00",
-                "id": 2,
-                "is_static´_overridden": false,
-                "label": "protocol",
-                "static_value": "mqtt",
-                "type": "protocol",
-                "updated": null,
-                "value_type": "string"
-              }
+                created: '2020-03-09T17:10:34.369905+00:00',
+                id: 2,
+                'is_static´_overridden': false,
+                label: 'protocol',
+                static_value: 'mqtt',
+                type: 'protocol',
+                updated: null,
+                value_type: 'string',
+              },
             ],
-            "static_value": "",
-            "template_id": "1",
-            "type": "dynamic",
-            "value_type": "float"
-          }
+            static_value: '',
+            template_id: '1',
+            type: 'dynamic',
+            value_type: 'float',
+          },
         ],
       },
-      "created": "2020-03-17T14:33:43.176756+00:00",
-      "id": "0998",
-      "label": "Thermometer",
-      "templates": [
-        1
-      ]
-    }
+      created: '2020-03-17T14:33:43.176756+00:00',
+      id: '0998',
+      label: 'Thermometer',
+      templates: [
+        1,
+      ],
+    },
   };
 
   const historyData = {
     0: {
-      "data": [{
-        "device_id": "0998",
-        "ts": "2018-03-22T13:47:07.050000Z",
-        "value": 10.6,
-        "attr": "temperature"
+      data: [{
+        device_id: '0998',
+        ts: '2018-03-22T13:47:07.050000Z',
+        value: 10.6,
+        attr: 'temperature',
       },
       {
-        "device_id": "0998",
-        "ts": "2018-03-22T13:46:42.455000Z",
-        "value": 15.6,
-        "attr": "temperature"
+        device_id: '0998',
+        ts: '2018-03-22T13:46:42.455000Z',
+        value: 15.6,
+        attr: 'temperature',
       },
       {
-        "device_id": "0998",
-        "ts": "2018-03-22T13:46:21.535000Z",
-        "value": 36.5,
-        "attr": "temperature"
-      }]
-    }, 1: {
-      "data": [{
-        "attr": "hue",
-        "value": "#4785FF",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:48:50.408000Z",
-        "metadata": {}
+        device_id: '0998',
+        ts: '2018-03-22T13:46:21.535000Z',
+        value: 36.5,
+        attr: 'temperature',
+      }],
+    },
+    1: {
+      data: [{
+        attr: 'hue',
+        value: '#4785FF',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:48:50.408000Z',
+        metadata: {},
       },
       {
-        "attr": "hue",
-        "value": "#4785FF",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:25:13.366000Z",
-        "metadata": {}
+        attr: 'hue',
+        value: '#4785FF',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:25:13.366000Z',
+        metadata: {},
       },
       {
-        "attr": "hue",
-        "value": "#414DE8",
-        "device_id": "8aa0f9",
-        "ts": "2020-05-06T16:25:06.697000Z",
-        "metadata": {}
-      }]
-    }, 2: [{
-      "attr": "intensity",
-      "value": 5,
-      "device_id": "8aa0f9",
-      "ts": "2020-05-06T16:48:50.408000Z",
-      "metadata": {}
-    }]
+        attr: 'hue',
+        value: '#414DE8',
+        device_id: '8aa0f9',
+        ts: '2020-05-06T16:25:06.697000Z',
+        metadata: {},
+      }],
+    },
+    2: [{
+      attr: 'intensity',
+      value: 5,
+      device_id: '8aa0f9',
+      ts: '2020-05-06T16:48:50.408000Z',
+      metadata: {},
+    }],
   };
 
   axios.mockResolvedValue(null)
@@ -725,82 +728,86 @@ it('should return history from 1 device', async () => {
 
   const params = {
     filter: {
-      devices: [{ deviceID: "0998", attrs: ["temperature"] }, { deviceID: "8aa0f9", attrs: ["hue", "intensity"] }],
-      lastN: 3
-    }
+      devices: [{ deviceID: '0998', attrs: ['temperature'] }, { deviceID: '8aa0f9', attrs: ['hue', 'intensity'] }],
+      lastN: 3,
+    },
   };
 
   const result = await Resolvers.Query.getDeviceHistory({}, params);
   expect(result).toEqual([{
-    deviceID: "0998",
-    label: "Thermometer",
+    deviceID: '0998',
+    label: 'Thermometer',
     attrs: [{
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 10.6,
-      "timestamp": "2018-03-22T13:47:07.050000Z",
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 10.6,
+      timestamp: '2018-03-22T13:47:07.050000Z',
     },
     {
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 15.6,
-      "timestamp": "2018-03-22T13:46:42.455000Z",
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 15.6,
+      timestamp: '2018-03-22T13:46:42.455000Z',
     },
     {
-      "label": "temperature",
-      "valueType": "NUMBER",
-      "value": 36.5,
-      "timestamp": "2018-03-22T13:46:21.535000Z",
-    }]
+      label: 'temperature',
+      valueType: 'NUMBER',
+      value: 36.5,
+      timestamp: '2018-03-22T13:46:21.535000Z',
+    }],
   }]);
 });
 
 /*it ('should return formatted device information', () => {
   const device = {
-    "attrs": {
-      "1": [
+    attrs: {
+      1: [
         {
-          "created": "2020-05-06T16:19:32.247307+00:00",
-          "id": 1,
-          "is_static_overridden": false,
-          "label": "hue",
-          "static_value": "",
-          "template_id": "1",
-          "type": "dynamic",
-          "value_type": "string"
+          created: '2020-05-06T16:19:32.247307+00:00',
+          id: 1,
+          is_static_overridden: false,
+          label: 'hue',
+          static_value: '',
+          template_id: '1',
+          type: 'dynamic',
+          value_type: 'string',
         },
         {
-          "created": "2020-05-06T16:19:32.397514+00:00",
-          "id": 2,
-          "is_static_overridden": false,
-          "label": "intensity",
-          "static_value": "",
-          "template_id": "1",
-          "type": "dynamic",
-          "value_type": "integer"
+          created: '2020-05-06T16:19:32.397514+00:00',
+          id: 2,
+          is_static_overridden: false,
+          label: 'intensity',
+          static_value: '',
+          template_id: '1',
+          type: 'dynamic',
+          value_type: 'integer',
         },
         {
-          "created": "2020-05-06T16:19:32.397514+00:00",
-          "id": 2,
-          "is_static_overridden": false,
-          "label": "intensity",
-          "static_value": "",
-          "template_id": "1",
-          "type": "static",
-          "value": 3,
-          "value_type": "integer"
-        }
-      ]
+          created: '2020-05-06T16:19:32.397514+00:00',
+          id: 2,
+          is_static_overridden: false,
+          label: 'intensity',
+          static_value: '',
+          template_id: '1',
+          type: 'static',
+          value: 3,
+          value_type: 'integer',
+        },
+      ],
     },
-    "created": "2020-05-06T16:19:46.185424+00:00",
-    "id": "8aa0f9",
-    "label": "Living_Room",
-    "templates": [
-      1
-    ]
+    created: '2020-05-06T16:19:46.185424+00:00',
+    id: '8aa0f9',
+    label: 'Living_Room',
+    templates: [
+      1,
+    ],
   };
 
-  const expectedResult = [{ "created": "2020-05-06T16:19:32.247307+00:00", "id": 1, "is_static_overridden": false, "label": "hue", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "STRING" }, { "created": "2020-05-06T16:19:32.397514+00:00", "id": 2, "is_static_overridden": false, "label": "intensity", "static_value": "", "template_id": "1", "type": "dynamic", "value_type": "NUMBER" }];
+  const expectedResult = [{
+    created: '2020-05-06T16:19:32.247307+00:00', id: 1, is_static_overridden: false, label: 'hue', static_value: '', template_id: '1', type: 'dynamic', value_type: 'STRING',
+  }, {
+    created: '2020-05-06T16:19:32.397514+00:00', id: 2, is_static_overridden: false, label: 'intensity', static_value: '', template_id: '1', type: 'dynamic', value_type: 'NUMBER',
+  }];
 
   return expect(Resolvers.Device.attrs(device)).toEqual(expectedResult);
 });*/
