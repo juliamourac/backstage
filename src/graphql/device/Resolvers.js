@@ -10,28 +10,41 @@ const setToken = ((token) => {
 });
 const optionsAxios = ((method, url) => UTIL.optionsAxios(method, url, params.token));
 
+function formatValueType(valType) {
+  let valueType = '';
+  switch (valType) {
+    case 'integer':
+      valueType = 'NUMBER';
+      break;
+    case 'float':
+      valueType = 'NUMBER';
+      break;
+    case 'bool':
+      valueType = 'BOOLEAN';
+      break;
+    case 'string':
+      valueType = 'STRING';
+      break;
+    case 'geo:point':
+      valueType = 'GEO';
+      break;
+    default:
+      valueType = 'UNDEFINED';
+  }
+  return valueType;
+}
+
 const Resolvers = {
   Query: {
     async getDeviceById(root, { deviceId }, context) {
       setToken(context.token);
-
       const device = {};
 
       try {
         const { data: deviceData } = await axios(optionsAxios(UTIL.GET, `/device/${deviceId}`));
         device.id = deviceData.id;
         device.label = deviceData.label;
-        device.attrs = [];
-        Object.keys(deviceData.attrs).forEach((key) => {
-          for (let i = 0; i < deviceData.attrs[key].length; i += 1) {
-            let valueType = formatValueType(deviceData.attrs[key][i].value_type);
-
-            device.attrs.push({
-              label: deviceData.attrs[key][i].label,
-              type: valueType,
-            });
-          }
-        });
+        device.attrs = deviceData.attrs;
 
         return (device);
       } catch (err) {
@@ -41,17 +54,15 @@ const Resolvers = {
 
     async getDevices(root, params) {
       // building the request string
-      let requestParameters = {};
+      const requestParameters = {};
       if (params.hasOwnProperty('page') && params.page.size != null) {
         requestParameters.page_size = params.page.size;
-      }
-      else {
+      } else {
         requestParameters.page_size = 20;
       }
       if (params.hasOwnProperty('page') && params.page.number != null) {
         requestParameters.page_num = params.page.number;
-      }
-      else {
+      } else {
         requestParameters.page_num = 1;
       }
       if (params.hasOwnProperty('filter') && params.filter.label != null) {
@@ -70,11 +81,11 @@ const Resolvers = {
       });
       try {
         const { data: fetchedData } = await axios(optionsAxios(UTIL.GET, requestString));
-        const deviceList = ([{
+        const deviceList = ({
           totalPages: fetchedData.pagination.total,
           currentPage: fetchedData.pagination.page,
           devices: fetchedData.devices,
-        }]);
+        });
         return deviceList;
       } catch (error) {
         LOG.error(error);
@@ -84,8 +95,8 @@ const Resolvers = {
     async getDeviceHistory(root, params) {
       const history = [];
       const keys = Object.keys(params.filter);
-      //removing element "devices" from list so it isn't appended to requestString
-      const index = keys.indexOf("devices");
+      // removing element "devices" from list so it isn't appended to requestString
+      const index = keys.indexOf('devices');
       keys.splice(index, 1);
       const requestStringPt1 = '/history/device/';
       let requestStringPt2 = '/history';
@@ -97,15 +108,15 @@ const Resolvers = {
         });
       }
 
-      let historyPromiseArray = [];
-      let fetchedData = [];
-      let devicePromiseArray = [];
-      let devicesInfo = [];
+      const historyPromiseArray = [];
+      const fetchedData = [];
+      const devicePromiseArray = [];
+      const devicesInfo = [];
 
       params.filter.devices.forEach((obj) => {
-        obj.attrs.forEach(attr => {
-          let requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}&attr=${attr}`;
-          const promiseHistory = axios(optionsAxios(UTIL.GET, requestString)).catch(err => {
+        obj.attrs.forEach((attr) => {
+          const requestString = `${requestStringPt1}${obj.deviceID}${requestStringPt2}&attr=${attr}`;
+          const promiseHistory = axios(optionsAxios(UTIL.GET, requestString)).catch((err) => {
             LOG.error(`Device id ${obj.id}: ${err}`);
             return Promise.resolve(null);
           });
@@ -115,51 +126,51 @@ const Resolvers = {
         devicePromiseArray.push(promiseDevice);
       });
 
-      //API calls are made and results are saved in arrays
-      await Promise.all(historyPromiseArray).then(values => {
-        Object.keys(values).forEach(keys => {
-          if (values[keys] != null && values[keys] != undefined ) {
-            values[keys].data.forEach(entry => {
+      // API calls are made and results are saved in arrays
+      await Promise.all(historyPromiseArray).then((values) => {
+        Object.keys(values).forEach((keys) => {
+          if (values[keys] != null && values[keys] != undefined) {
+            values[keys].data.forEach((entry) => {
               fetchedData.push(entry);
-            })
+            });
           }
-        })
-      }).catch(error => {
+        });
+      }).catch((error) => {
         LOG.error(`${error}`);
       });
 
-      await Promise.all(devicePromiseArray).then(values => {
-        Object.keys(values).forEach(keys => {
+      await Promise.all(devicePromiseArray).then((values) => {
+        Object.keys(values).forEach((keys) => {
           if (values[keys] != null && values[keys] != undefined) {
             devicesInfo.push(values[keys].data);
           }
-        })
-      }).catch(error => {
+        });
+      }).catch((error) => {
         LOG.error(error);
       });
 
-      devicesInfo.forEach(deviceObj => {
+      devicesInfo.forEach((deviceObj) => {
         if (deviceObj === null || deviceObj === undefined) { return; }
-        //listing device attributes so a  reading's value type can be defined
-        let deviceAttributes = {};
-        Object.keys(deviceObj.attrs).forEach(key => {
-          deviceObj.attrs[key].forEach(attr => {
+        // listing device attributes so a  reading's value type can be defined
+        const deviceAttributes = {};
+        Object.keys(deviceObj.attrs).forEach((key) => {
+          deviceObj.attrs[key].forEach((attr) => {
             deviceAttributes[attr.label] = {
               label: attr.label,
-              valueType: attr.value_type
-            }
+              valueType: attr.value_type,
+            };
           });
         });
 
-        let readings = [];
-        fetchedData.forEach(data => {
+        const readings = [];
+        fetchedData.forEach((data) => {
           if (deviceObj.id === data.device_id) {
             readings.push({
               label: data.attr,
               valueType: formatValueType(deviceAttributes[data.attr].valueType),
               value: data.value,
               timestamp: data.ts,
-            })
+            });
           }
         });
 
@@ -185,38 +196,17 @@ const Resolvers = {
       fetchedKeys.forEach((template) => {
         fetchedAttrs[template].forEach((attribute) => {
           if (attribute.type === 'dynamic') {
-            attribute.value_type = formatValueType(attribute.value_type);
-            toReturn.push(attribute);
+            toReturn.push({
+              label: attribute.label,
+              value_type: formatValueType(attribute.value_type),
+            });
           }
-        })
+        });
       });
       return toReturn;
     },
   },
 };
 
-function formatValueType(valType) {
-  let valueType = '';
-  switch (valType) {
-    case 'integer':
-      valueType = 'NUMBER';
-      break;
-    case 'float':
-      valueType = 'NUMBER';
-      break;
-    case 'bool':
-      valueType = 'BOOLEAN';
-      break;
-    case 'string':
-      valueType = 'STRING';
-      break;
-    case 'geo:point':
-      valueType = 'GEO';
-      break;
-    default:
-      valueType = 'UNDEFINED';
-  }
-  return valueType;
-}
 
 module.exports = Resolvers;
