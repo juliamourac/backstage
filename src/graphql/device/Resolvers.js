@@ -197,7 +197,7 @@ const Resolvers = {
           if (deviceObj.id === data.device_id) {
             readings.push({
               label: data.attr,
-              valueType: formatValueType(deviceAttributes[data.attr].valueType),
+              valueType: deviceAttributes[data.attr].valueType,
               value: data.value,
               timestamp: data.ts,
             });

@@ -16,7 +16,7 @@ type Device {
  """Necessary data about and attribute of a device"""
  type Attr {
     label: String!
-    value_type: ValueType!
+    valueType: ValueType!
  }
   
 """A paginated list of Devices."""

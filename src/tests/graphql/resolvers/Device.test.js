@@ -452,7 +452,7 @@ it('should return history from 2 devices', async () => {
               {
                 created: '2020-03-09T17:10:34.369905+00:00',
                 id: 2,
-                'is_static´_overridden': false,
+                'is_static_overridden': false,
                 label: 'protocol',
                 static_value: 'mqtt',
                 type: 'protocol',
@@ -757,57 +757,3 @@ it('should return history from 1 device', async () => {
     }],
   }]);
 });
-
-/*it ('should return formatted device information', () => {
-  const device = {
-    attrs: {
-      1: [
-        {
-          created: '2020-05-06T16:19:32.247307+00:00',
-          id: 1,
-          is_static_overridden: false,
-          label: 'hue',
-          static_value: '',
-          template_id: '1',
-          type: 'dynamic',
-          value_type: 'string',
-        },
-        {
-          created: '2020-05-06T16:19:32.397514+00:00',
-          id: 2,
-          is_static_overridden: false,
-          label: 'intensity',
-          static_value: '',
-          template_id: '1',
-          type: 'dynamic',
-          value_type: 'integer',
-        },
-        {
-          created: '2020-05-06T16:19:32.397514+00:00',
-          id: 2,
-          is_static_overridden: false,
-          label: 'intensity',
-          static_value: '',
-          template_id: '1',
-          type: 'static',
-          value: 3,
-          value_type: 'integer',
-        },
-      ],
-    },
-    created: '2020-05-06T16:19:46.185424+00:00',
-    id: '8aa0f9',
-    label: 'Living_Room',
-    templates: [
-      1,
-    ],
-  };
-
-  const expectedResult = [{
-    created: '2020-05-06T16:19:32.247307+00:00', id: 1, is_static_overridden: false, label: 'hue', static_value: '', template_id: '1', type: 'dynamic', value_type: 'STRING',
-  }, {
-    created: '2020-05-06T16:19:32.397514+00:00', id: 2, is_static_overridden: false, label: 'intensity', static_value: '', template_id: '1', type: 'dynamic', value_type: 'NUMBER',
-  }];
-
-  return expect(Resolvers.Device.attrs(device)).toEqual(expectedResult);
-});*/
