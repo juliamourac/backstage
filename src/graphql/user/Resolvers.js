@@ -1,5 +1,5 @@
 const LOG = require('../../utils/Log');
-const connection = require('../../db');
+const {userPool} = require('../../db');
 
 const Resolvers = {
     Query: {
@@ -10,7 +10,7 @@ const Resolvers = {
             };
 
             try {
-                const result = await connection.query(query);
+                const result = await userPool.query(query);
                 if (result.rowCount) {
                     return (JSON.stringify(result.rows[0].configuration));
                 }
@@ -38,7 +38,7 @@ const Resolvers = {
                     values: [params.user, params.tenant]
                 };
 
-                let result = await connection.query(query);
+                let result = await userPool.query(query);
 
                 if (result.rowCount) {
                     query = {
@@ -46,7 +46,7 @@ const Resolvers = {
                         values: [params.user, params.tenant, JSON.parse(params.config), date]
                     };
 
-                    result = await connection.query(query);
+                    result = await userPool.query(query);
                     if (result.rowCount) {
                         return "Updated user's dashboard configuration";
                     }
@@ -58,7 +58,7 @@ const Resolvers = {
                         text: "INSERT INTO user_config VALUES ($1, $2, $3, $4);",
                         values: [params.tenant, params.user, JSON.parse(params.config), date]
                     };
-                    result = await connection.query(query);
+                    result = await userPool.query(query);
                     if (result.rowCount) {
                         return "Added configuration to database";
                     }

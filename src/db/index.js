@@ -9,4 +9,12 @@ const pool = new Pool({
   port: config.postgres_port,
 });
 
-module.exports = pool;
+const userPool = new Pool({
+  user: config.postgres_user,
+  host: config.postgres_host,
+  database: config.postgres_user_database,
+  password: config.postgres_password,
+  port: config.postgres_port,
+});
+
+module.exports = {pool, userPool};

@@ -1,17 +1,45 @@
-const connection = require('./db');
+const { pool, userPool } = require('./db');
 const LOG = require('./utils/Log');
 const config = require('./config');
 
+//check if database exists
+async function checkDatabase(database_name) {
+    let query = {
+        text: "SELECT * FROM pg_catalog.pg_database WHERE datname=$1;",
+        values: [database_name]
+    };
+
+    try {
+        let result = await pool.query(query);
+        if (!result.rowCount) {
+            LOG.info('Database does not exist.');
+            query = {
+                text: `CREATE DATABASE ${database_name}`
+            };
+            result = await pool.query(query);
+            LOG.info('Successfully created database, proceeding to check table existence.')
+            checkTable(config.user_config_data_table);
+        }
+        else {
+            LOG.info(`Database ${database_name} already exists, proceeding to check table existence.`);
+            checkTable(config.user_config_data_table);
+        }
+    } catch (err) {
+        LOG.error(err);
+    }
+}
+
 //check if table exists
-async function checkTable(table_name){
+async function checkTable(table_name) {
+
     let query = {
         text: "SELECT * FROM information_schema.tables WHERE table_name=$1;",
         values: [table_name]
     };
-    try{
-        const client = await connection.connect();
+    try {
+        const client = await userPool.connect();
         let result = await client.query(query);
-        if (!result.rowCount){
+        if (!result.rowCount) {
             LOG.info('Table "user_config" not found.');
             query = {
                 text: "CREATE TABLE user_config ( \
@@ -22,19 +50,18 @@ async function checkTable(table_name){
                     CONSTRAINT unique_user PRIMARY KEY (tenant, username) \
                  );"
             };
-            result = await client.query(query);
+            await client.query(query);
         }
         else {
-            LOG.info('Table user_config already exists');
+            LOG.info(`Table ${table_name}  already exists.`);
         }
-        return true;
-    }catch (err){
-        LOG.error(`Erro: ${JSON.stringify(err)}`);
-        return false;
-    }finally{
-        connection.end();
+        LOG.info(`Table ${table_name} is available to use.`);
+    } catch (err) {
+        LOG.error(`Erro: ${err}`);
+    } finally {
+        pool.end();
+        userPool.end();
         process.exit();
     }
 }
-
-checkTable(config.user_config_data_table);
+checkDatabase(config.postgres_user_database);

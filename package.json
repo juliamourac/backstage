@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest src/tests/.*.test.js --coverage && codecov",
     "dev": "node src/databaseCheck.js && nodemon src/index.js",
-    "start": "node index.js"
+    "start": "node src/databaseCheck.js && node index.js"
   },
   "repository": {
     "type": "git",
