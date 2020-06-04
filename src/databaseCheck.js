@@ -16,7 +16,7 @@ async function checkDatabase(database_name) {
             query = {
                 text: `CREATE DATABASE ${database_name}`
             };
-            result = await pool.query(query);
+            await pool.query(query);
             LOG.info('Successfully created database, proceeding to check table existence.')
             checkTable(config.user_config_data_table);
         }
