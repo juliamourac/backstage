@@ -13,8 +13,11 @@ const config = {
   postgres_port: process.env.POSTGRES_PORT || 5432,
   base_local_url_graphql: `${configGraphQL.local_url}:${configGraphQL.local_port}`,
   base_auth_url_graphql: `${configGraphQL.auth_internal_url}:${configGraphQL.auth_internal_port}`,
-  postgres_user_database: process.env.USER_DATABASE_NAME || 'dojot_dash_users',
-  user_config_data_table: process.env.USER_DATATABLE || 'user_config',
+  postgres_backstage_database: process.env.BACKSTAGE_DB_NAME || 'dojot_dash_users',
+  postgres_backstage_user: process.env.BACKSTAGE_DB_USER || 'postgres',
+  postgres_backstage_pwd: process.env.BACKSTAGE_DB_PWD || 'postgres',
+  postgres_backstage_host: process.env.BACKSTAGE_DB_HOST || 'postgres',
+  postgres_backstage_port: process.env.BACKSTAGE_DB_PORT || 5432
 };
 
 module.exports = config

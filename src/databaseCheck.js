@@ -18,11 +18,11 @@ async function checkDatabase(database_name) {
             };
             await pool.query(query);
             LOG.info('Successfully created database, proceeding to check table existence.')
-            checkTable(config.user_config_data_table);
+            checkTable('user_config');
         }
         else {
             LOG.info(`Database ${database_name} already exists, proceeding to check table existence.`);
-            checkTable(config.user_config_data_table);
+            checkTable('user_config');
         }
     } catch (err) {
         LOG.error(err);
@@ -40,7 +40,7 @@ async function checkTable(table_name) {
         const client = await userPool.connect();
         let result = await client.query(query);
         if (!result.rowCount) {
-            LOG.info('Table "user_config" not found.');
+            LOG.info(`Table ${table_name} not found.`);
             query = {
                 text: "CREATE TABLE user_config ( \
                     tenant varchar(255) NOT NULL, \
@@ -64,4 +64,4 @@ async function checkTable(table_name) {
         process.exit();
     }
 }
-checkDatabase(config.postgres_user_database);
+checkDatabase(config.postgres_backstage_database);
