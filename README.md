@@ -8,14 +8,14 @@ Documentation for development: https://dojot.github.io/backstage/development/
 ## **Environment Variables**
 Key                        | Purpose                                                  | Default Value      | Valid Values |
 -------------------------- | -------------------------------------------------------- | ---------------    | -----------  |
-PORT                       | Port in which the application will be accessible         | 3005               | Integer      |
-POSTGRES_USER              | User to login into postgres database                     | postgres           | String       |
-POSTGRES_PASSWORD          | Password to login into postgres database                 | postgres           | String       |
-POSTGRES_HOST              | Postgres' instance host address                          | postgres           | String       |
-POSTGRES_DATABASE          | The name of the 'default' database to be used            | dojot_devm         | String       |
-POSTGRES_PORT              | User to login into postgres database                     | 5432               | Integer      |
-BACKSTAGE_DB_NAME          | The name of the database that stores users' dashboard configuration| dojot_dash_users           | String       |
-BACKSTAGE_DB_USER          | User to login into users' dashboard configuration database| postgres           | String       |
-BACKSTAGE_DB_PWD           | User to login into postgres database                     | postgres           | String       |
-BACKSTAGE_DB_HOST          | User to login into postgres database                     | postgres           | String       |
-BACKSTAGE_DB_PORT          | User to login into postgres database                     | 5432           | Integer       |
+PORT                                 | Port in which this application will be accessible         | 3005               | Integer      |
+DEVICE_MANAGER_POSTGRES_USER         | User to login into postgres database which has template data                     | postgres           | String       |
+DEVICE_MANAGER_POSTGRES_PASSWORD     | Password to login into postgres template database                 | postgres           | String       |
+DEVICE_MANAGER_POSTGRES_DATABASE     | The name of the database with template information to be used            | dojot_devm         | String       |
+DEVICE_MANAGER_POSTGRES_HOST         | Postgre's instance host address                          | postgres           | String       |
+DEVICE_MANAGER_POSTGRES_PORT         | Port number used to access the Postgre instance                    | 5432               | Integer      |
+BACKSTAGE_DASHBOARD_DB_NAME          | The name of the database that stores users' dashboard configuration| dojot_dash_users           | String       |
+BACKSTAGE_DASHBOARD_DB_USER          | User to login into users' dashboard configuration database| postgres           | String       |
+BACKSTAGE_DASHBOARD_DB_PASSWORD      | Password to login into users' dashboard configuration database                     | postgres           | String       |
+BACKSTAGE_DASHBOARD_DB_HOST          | Postgre's instance host address                    | postgres           | String       |
+BACKSTAGE_DASHBOARD_DB_PORT          | Port number used to access the Postgre instance that has the users' dashboard configuration database | 5432           | Integer       |
