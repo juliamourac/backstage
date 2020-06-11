@@ -16,8 +16,8 @@ const config = {
   postgres_backstage_database: process.env.BACKSTAGE_DASBOARD_DB_NAME || 'dojot_dash_users',
   postgres_backstage_user: process.env.BACKSTAGE_DASHBOARD_DB_USER || 'postgres',
   postgres_backstage_pwd: process.env.BACKSTAGE_DASHBOARD_DB_PASSWORD || 'postgres',
-  postgres_backstage_host: process.env.BACKSTAGE_DASHBOARD_DB_HOST || 'localhost',
-  postgres_backstage_port: process.env.BACKSTAGE_DASHBOARD_DB_PORT || 5432
+  postgres_backstage_host: process.env.BACKSTAGE_DASHBOARD_DB_HOST || 'postgres',
+  postgres_backstage_port: process.env.BACKSTAGE_DASHBOARD_DB_PORT || 5432,
 };
 
-module.exports = config
+module.exports = config;

@@ -27,7 +27,7 @@ const query = [`
     }
   type Mutation {
     #Updates existing information on database, or creates an entry if it doesn't exist. Returns success message if it works or error message if fails.
-      updateConfig(user:String, tenant:String, config: String): String
+      updateConfig(user:String!, tenant:String!, config: String!): String
     }
 `];
 
